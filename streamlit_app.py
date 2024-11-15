@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 rendimiento_url = 'https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/main/Tabladerendimientoacademico1.csv'
-
 df = pd.read_csv(rendimiento_url)
+
 
 def main():
     st.title("Comparativa de Rendimiento Académico 📊")
