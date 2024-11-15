@@ -8,10 +8,10 @@ def main():
     st.title("DataViz")
     st.header("Dataframe:")
     st.info("Estamos probando cosas! todavia en mantenimiento")
-    with st.expander("Tabla 1"):
+    with st.expander("Tabla de Rendimiento"):
         st.dataframe(df)
-        
-    st.dataframe(df1)
+    with st.expander("Tabla de Comparativa"):
+        st.dataframe(df1)
 
 if __name__ == "__main__":
     main()
