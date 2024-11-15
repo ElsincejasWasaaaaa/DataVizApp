@@ -12,6 +12,11 @@ def main():
         st.dataframe(df)
     with st.expander("Tabla de Comparativa"):
         st.dataframe(df1)
+    with st.sidebar:
+        st.header("Opciones")
+        Año = st.selectbox("Año", ("2018", "2017", "2019", "2021"))
+        Universidad = st.selectbox("Universidad", ("PUCP", "UNMSM", "UPC"))
+        NoseXD = st.slider("Satisfaccion", 80, 90, 43.9)
 
 if __name__ == "__main__":
     main()
