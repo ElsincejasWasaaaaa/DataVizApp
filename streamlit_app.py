@@ -1,22 +1,39 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
-df = pd.read_csv('https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/refs/heads/main/Tabladerendimientoacademico1.csv')
-df1 = pd.read_csv('https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/refs/heads/main/ComparativaDeSatisfaccionEstudiantil1.csv')
+rendimiento_url = 'https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/refs/heads/main/Tabladerendimientoacademico1.csv'
+
+df = pd.read_csv(rendimiento_url)
 
 def main():
-    st.title("DataViz")
-    st.header("Dataframe:")
-    st.info("Estamos probando cosas! todavia en mantenimiento")
-    with st.expander("Tabla de Rendimiento"):
-        st.dataframe(df)
-    with st.expander("Tabla de Comparativa"):
-        st.dataframe(df1)
+    st.title("Comparativa de Rendimiento Académico 📊")
+    st.info("Comparación del rendimiento académico de los estudiantes entre años seleccionados.")
+
     with st.sidebar:
-        st.header("Opciones")
-        Año = st.selectbox("Año", ("2018", "2017", "2019", "2021"))
-        Universidad = st.selectbox("Universidad", ("PUCP", "UNMSM", "UPC"))
-        NoseXD = st.slider("Satisfaccion", 50, 94)
+        st.header("Opciones de Filtro")
+        videojuego_seleccionado = st.selectbox("Selecciona el Videojuego Educativo", df['videjueg_Educativo'].unique())
+        anio_inicio = st.selectbox("Selecciona el Año de Inicio", sorted(df['año'].unique()))
+        anio_fin = st.selectbox("Selecciona el Año de Fin", sorted(df['año'].unique()))
+
+    df_filtrado = df[(df['videjueg_Educativo'] == videojuego_seleccionado) &
+                     (df['año'].isin([anio_inicio, anio_fin]))]
+
+    with st.expander("Tabla de Rendimiento Académico Filtrada"):
+        st.dataframe(df_filtrado)
+        
+    if st.button("Mostrar Comparativa de Rendimiento Académico"):
+        fig, ax = plt.subplots()
+
+        rendimiento_por_universidad_anio = df_filtrado.groupby(['universidad', 'año'])['Rendimiento_Promedio'].mean().unstack()
+
+        rendimiento_por_universidad_anio.plot(kind='bar', ax=ax)
+        ax.set_xlabel("Universidad")
+        ax.set_ylabel("Rendimiento Promedio")
+        ax.set_title(f"Comparativa de Rendimiento Académico en {anio_inicio} y {anio_fin}")
+        ax.legend(title="Año")
+
+        st.pyplot(fig)
 
 if __name__ == "__main__":
     main()
