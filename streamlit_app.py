@@ -16,7 +16,7 @@ def main():
         st.header("Opciones")
         Año = st.selectbox("Año", ("2018", "2017", "2019", "2021"))
         Universidad = st.selectbox("Universidad", ("PUCP", "UNMSM", "UPC"))
-        NoseXD = st.slider("Satisfaccion", 80, 90, 43.9)
+        NoseXD = st.slider("Satisfaccion", 50, 94)
 
 if __name__ == "__main__":
     main()
