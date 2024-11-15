@@ -8,7 +8,9 @@ def main():
     st.title("DataViz")
     st.header("Dataframe:")
     st.info("Estamos probando cosas! todavia en mantenimiento")
-    st.dataframe(df)
+    with st.expander("Tabla 1"9:
+        st.dataframe(df)
+        
     st.dataframe(df1)
 
 if __name__ == "__main__":
