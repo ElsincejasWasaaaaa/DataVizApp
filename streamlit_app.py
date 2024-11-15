@@ -1,39 +1,45 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
+# URLs de los datos
 rendimiento_url = 'https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/main/Tabladerendimientoacademico1.csv'
-satisfaccion_url = 'https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/main/ComparativaDeSatisfaccionEstudiantil1.csv'  # Ajusta la ruta si es necesario
+satisfaccion_url = 'https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/main/ComparativaDeSatisfaccionEstudiantil1.csv' 
 
+# Cargar datos
 df_rendimiento = pd.read_csv(rendimiento_url)
 df_satisfaccion = pd.read_csv(satisfaccion_url)
 
 def main():
     st.title("Análisis Académico y Estudiantil 📊")
-    st.info("Analiza el rendimiento académico y la satisfacción estudiantil a lo largo de los años.")
-
+    # Sidebar para selección de sección
     with st.sidebar:
         st.header("Selecciona el Análisis")
-        analisis = st.radio("Opciones", ["Rendimiento Académico", "Satisfacción y Retención"])
+        analisis = st.radio("Opciones", ["Rendimiento Académico", "Satisfacción y Retención", "Relación Uso y Rendimiento"])
 
     if analisis == "Rendimiento Académico":
         st.header("Comparativa de Rendimiento Académico")
         st.info("Comparación del rendimiento académico de los estudiantes entre años seleccionados.")
         
+        # Sidebar para selección de filtros
         with st.sidebar:
             st.subheader("Opciones de Filtro (Rendimiento)")
             videojuego_seleccionado = st.selectbox("Selecciona el Videojuego Educativo", df_rendimiento['videjueg_Educativo'].unique())
             anio_inicio = st.selectbox("Año de Inicio", sorted(df_rendimiento['año'].unique()))
             anio_fin = st.selectbox("Año de Fin", sorted(df_rendimiento['año'].unique()))
 
+        # Filtrar datos
         df_filtrado = df_rendimiento[
             (df_rendimiento['videjueg_Educativo'] == videojuego_seleccionado) & 
             (df_rendimiento['año'].isin([anio_inicio, anio_fin]))
         ]
 
+        # Mostrar la tabla filtrada
         with st.expander("Tabla de Rendimiento Académico Filtrada"):
             st.dataframe(df_filtrado)
 
+        # Gráfico de barras comparativo
         if st.button("Mostrar Comparativa de Rendimiento Académico"):
             fig, ax = plt.subplots()
             rendimiento_por_universidad_anio = df_filtrado.groupby(['universidad', 'año'])['Rendimiento_Promedio'].mean().unstack()
@@ -46,7 +52,8 @@ def main():
 
     elif analisis == "Satisfacción y Retención":
         st.header("Comparativa de Satisfacción y Retención Estudiantil")
-
+        
+        # Sidebar para selección de filtros
         with st.sidebar:
             st.subheader("Opciones de Filtro (Satisfacción y Retención)")
             uni1 = st.selectbox("Universidad 1", options=["UPC", "PUCP", "UNMSM"], index=0)
@@ -82,6 +89,40 @@ def main():
                 plt.xticks(rotation=45, ha='right')
                 plt.tight_layout()
                 st.pyplot(fig)
+
+    elif analisis == "Relación Uso y Rendimiento":
+        st.header("Relación entre Uso de Videojuegos y Rendimiento Académico")
+        
+        # Crear datos para el análisis
+        datos = {
+            'Estudiantes Usando': [200, 150, 100, 220, 160, 110, 250, 180, 120, 230],
+            'Rendimiento Promedio (%)': [75, 70, 80, 78, 72, 82, 80, 74, 85, 82],
+            'Videojuego': ['MathQuest', 'SciExplorers', 'LitAdventure', 'MathQuest', 'SciExplorers', 
+                           'LitAdventure', 'MathQuest', 'SciExplorers', 'LitAdventure', 'MathQuest']
+        }
+
+        df = pd.DataFrame(datos)
+
+        # Colores personalizados para los videojuegos
+        colores = {'MathQuest': 'red', 'SciExplorers': 'blue', 'LitAdventure': 'green'}
+
+        # Crear gráfico de dispersión con Seaborn
+        plt.figure(figsize=(10, 6))
+        sns.scatterplot(
+            x='Estudiantes Usando',
+            y='Rendimiento Promedio (%)',
+            data=df,
+            hue='Videojuego',
+            palette=colores,
+            s=100,
+            edgecolor='black'
+        )
+
+        plt.title('Relación entre Uso de Videojuegos y Rendimiento Académico')
+        plt.xlabel('Número de Estudiantes Usando Videojuegos')
+        plt.ylabel('Rendimiento Promedio (%)')
+        plt.legend(title='Videojuego')
+        st.pyplot(plt)
 
 if __name__ == "__main__":
     main()
