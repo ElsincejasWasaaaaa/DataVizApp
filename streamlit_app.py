@@ -1,5 +1,11 @@
 import streamlit as st
+import pandas as pd
 
-st.title('🎈 App Name')
+def main():
+    st.title("DataViz")
+    st.header("Dataframe:")
+    st.dataframe(df)
+    st.dataframe(df1)
 
-st.write('Hello world!')
+if __name__ == "__main__":
+    main()
