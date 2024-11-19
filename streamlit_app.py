@@ -12,11 +12,12 @@ df_rendimiento = pd.read_csv(rendimiento_url)
 df_satisfaccion = pd.read_csv(satisfaccion_url)
 
 def main():
+    #Parte mia xd (Guido)
     st.title("Análisis Académico y Estudiantil 📊")
     # Sidebar para selección de sección
     with st.sidebar:
         st.header("Selecciona el Análisis")
-        analisis = st.radio("Opciones", ["Rendimiento Académico", "Satisfacción y Retención", "Relación Uso y Rendimiento"])
+        analisis = st.radio("Opciones", ["Rendimiento Académico", "Satisfacción y Retención", "Relación Uso y Rendimiento", "Gráfico de Pastel - Satisfacción"])
 
     if analisis == "Rendimiento Académico":
         st.header("Comparativa de Rendimiento Académico")
@@ -50,6 +51,7 @@ def main():
             ax.legend(title="Año")
             st.pyplot(fig)
 
+    #Parte de Yair
     elif analisis == "Satisfacción y Retención":
         st.header("Comparativa de Satisfacción y Retención Estudiantil")
         
@@ -90,6 +92,7 @@ def main():
                 plt.tight_layout()
                 st.pyplot(fig)
 
+    #Parte de Alvaro:
     elif analisis == "Relación Uso y Rendimiento":
         st.header("Relación entre Uso de Videojuegos y Rendimiento Académico")
         
@@ -123,6 +126,39 @@ def main():
         plt.ylabel('Rendimiento Promedio (%)')
         plt.legend(title='Videojuego')
         st.pyplot(plt)
+
+    elif analisis == "Gráfico de Pastel - Satisfacción":
+        st.header("Distribución de Satisfacción Estudiantil por Año y Universidad")
+    
+        # Sidebar para filtros
+        with st.sidebar:
+            st.subheader("Opciones de Filtro (Gráfico de Pastel)")
+            anio_seleccionado = st.selectbox("Selecciona el Año", df_satisfaccion['Año'].unique())
+            universidad_seleccionada = st.selectbox("Selecciona la Universidad", df_satisfaccion['Universidad'].unique())
+    
+    # Filtrar datos por el año seleccionado
+        datos_filtrados = df_satisfaccion[df_satisfaccion['Año'] == anio_seleccionado]
+    
+    # Verificar si hay datos para ese año
+        if datos_filtrados.empty:
+            st.warning("No hay datos disponibles para el año seleccionado.")
+        else:
+        # Preparar datos para el gráfico
+            labels = datos_filtrados['Universidad']
+            sizes = datos_filtrados['Satisfaccion']
+            explode = [0.1 if uni == universidad_seleccionada else 0 for uni in labels]  # Resaltar la universidad seleccionada
+
+        # Crear el gráfico de pastel
+            fig, ax = plt.subplots()
+            ax.pie(
+                sizes, labels=labels, explode=explode, autopct='%1.1f%%', 
+                startangle=90, colors=['#ff9999', '#66b3ff', '#99ff99']
+            )
+            ax.axis('equal')  # Asegurar que el pastel sea circular
+            ax.set_title(f"Distribución de Satisfacción en {anio_seleccionado}")
+
+        # Mostrar el gráfico
+            st.pyplot(fig)
 
 if __name__ == "__main__":
     main()
