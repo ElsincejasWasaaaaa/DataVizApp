@@ -223,7 +223,7 @@ def regresion_lineal():
         st.success(f"Si {int(estudiantes_input)} estudiantes usan videojuegos educativos, el rendimiento promedio esperado sería **{prediccion:.2f}%**.")
 
 def main():
-    st.title("Análisis Académico y Estudiantil 📊")
+    st.title("Dataviz: Datos Educativos Transformados en Conocimiento 🧠✨")
     with st.sidebar:
         st.header("Selecciona el Análisis")
         analisis = st.radio("Opciones", [
