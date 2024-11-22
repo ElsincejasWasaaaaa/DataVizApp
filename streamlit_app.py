@@ -18,11 +18,11 @@ class CargaDatos:
             st.error(f"Error al cargar los datos: {e}")
             st.stop()
 
-class Analysis:
+class Analisis:
     def __init__(self, data_manager):
         self.data_manager = data_manager
 
-    def rendimiento_academico(self):
+    def rendimiento_academico(self): #yo
         st.header("Comparativa de Rendimiento Académico")
         st.info("Comparación del rendimiento académico de los estudiantes entre años seleccionados.")
         
@@ -32,52 +32,54 @@ class Analysis:
                 "Selecciona el Videojuego Educativo", 
                 self.data_manager.df_rendimiento['videjueg_Educativo'].unique()
             )
-            anio_inicio = st.selectbox("Año de Inicio", sorted(self.data_manager.df_rendimiento['año'].unique()))
-            anio_fin = st.selectbox(
+            año_inicio = st.selectbox("Año de Inicio", sorted(self.data_manager.df_rendimiento['año'].unique()))
+            año_fin = st.selectbox(
                 "Año de Fin", 
-                [x for x in sorted(self.data_manager.df_rendimiento['año'].unique()) if x >= anio_inicio]
+                [x for x in sorted(self.data_manager.df_rendimiento['año'].unique()) if x >= año_inicio]
             )
         
         df_filtrado = self.data_manager.df_rendimiento[
             (self.data_manager.df_rendimiento['videjueg_Educativo'] == videojuego_seleccionado) & 
-            (self.data_manager.df_rendimiento['año'].between(anio_inicio, anio_fin))
+            (self.data_manager.df_rendimiento['año'].between(año_inicio, año_fin))
         ]
 
         with st.expander("Tabla de Rendimiento Académico Filtrada"):
             st.dataframe(df_filtrado)
 
+
+        #mean() sirve para calcular el promedio y unstack() sirve para convertir el DataFrame agrupado de formato largo a formato ancho, donde los años se colocan como columnas, y las universidades como filas.
         if st.button("Mostrar Comparativa de Rendimiento Académico"):
             fig, ax = plt.subplots()
-            rendimiento_por_universidad_anio = df_filtrado.groupby(['universidad', 'año'])['Rendimiento_Promedio'].mean().unstack()
+            rendimiento_por_universidad_anio = df_filtrado.groupby(['universidad', 'año'])['Rendimiento_Promedio'].mean().unstack() 
             rendimiento_por_universidad_anio.plot(kind='bar', ax=ax, colormap='viridis')
             ax.set_xlabel("Universidad")
             ax.set_ylabel("Rendimiento Promedio")
-            ax.set_title(f"Comparativa de Rendimiento Académico en {anio_inicio} y {anio_fin}")
+            ax.set_title(f"Comparativa de Rendimiento Académico en {año_inicio} y {año_fin}")
             ax.legend(title="Año")
             st.pyplot(fig)
 
-    def satisfaccion_y_retencion(self):
+    def satisfaccion_y_retencion(self): #yair
         st.header("Comparativa de Satisfacción y Retención Estudiantil")
         
         with st.sidebar:
             st.subheader("Opciones de Filtro (Satisfacción y Retención)")
             uni1 = st.selectbox("Universidad 1", options=["UPC", "PUCP", "UNMSM"], index=0)
             uni2 = st.selectbox("Universidad 2 (diferente a la 1)", options=["UPC", "PUCP", "UNMSM"], index=1)
-            anio_inicio = st.selectbox("Año de Inicio", options=list(range(2015, 2022)), index=0)
-            anio_fin = st.selectbox("Año de Fin", options=list(range(2015, 2022)), index=6)
+            año_inicio = st.selectbox("Año de Inicio", options=list(range(2015, 2022)), index=0)
+            año_fin = st.selectbox("Año de Fin", options=list(range(2015, 2022)), index=6)
 
         if uni1 == uni2:
             st.error("Universidad 1 y Universidad 2 no deben ser iguales.")
             return
 
-        if anio_inicio > anio_fin:
+        if año_inicio > año_fin:
             st.error("El año de inicio debe ser menor o igual al año de fin.")
             return
 
         universidades = [uni1, uni2]
         filtered_data = self.data_manager.df_satisfaccion[
             (self.data_manager.df_satisfaccion['Universidad'].isin(universidades)) & 
-            (self.data_manager.df_satisfaccion['Año'].between(anio_inicio, anio_fin))
+            (self.data_manager.df_satisfaccion['Año'].between(año_inicio, año_fin))
         ]
 
         if filtered_data.empty:
@@ -95,13 +97,13 @@ class Analysis:
         
         ax.set_xlabel('Universidad y Año')
         ax.set_ylabel('Porcentaje (%)')
-        ax.set_title(f'Comparativa de Satisfacción y Retención ({anio_inicio}-{anio_fin})')
+        ax.set_title(f'Comparativa de Satisfacción y Retención ({año_inicio}-{año_fin})')
         ax.legend()
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
         st.pyplot(fig)
 
-    def analisis_relacion_uso_rendimiento(self):
+    def analisis_relacion_uso_rendimiento(self): #alvaro 
         st.header("Relación entre Uso de Videojuegos y Rendimiento Académico")
         
         datos = {
@@ -130,12 +132,12 @@ class Analysis:
         plt.legend(title='Videojuego')
         st.pyplot(plt)
 
-    def grafico_pastel_satisfaccion(self):
+    def grafico_pastel_satisfaccion(self): #yo
         st.header("Distribución de Satisfacción Estudiantil por Año y Universidad")
         
         with st.sidebar:
             st.subheader("Opciones de Filtro (Gráfico de Pastel)")
-            anio_seleccionado = st.selectbox(
+            año_seleccionado = st.selectbox(
                 "Selecciona el Año", 
                 self.data_manager.df_satisfaccion['Año'].unique()
             )
@@ -145,25 +147,22 @@ class Analysis:
             )
 
         datos_filtrados = self.data_manager.df_satisfaccion[
-            self.data_manager.df_satisfaccion['Año'] == anio_seleccionado
+            self.data_manager.df_satisfaccion['Año'] == año_seleccionado
         ]
         
-        if datos_filtrados.empty:
-            st.warning("No hay datos disponibles para el año seleccionado.")
-            return
-
-        labels = datos_filtrados['Universidad']
-        sizes = datos_filtrados['Satisfaccion']
-        explode = [0.1 if uni == universidad_seleccionada else 0 for uni in labels]
+        
+        Lado = datos_filtrados['Universidad']
+        Piezas = datos_filtrados['Satisfaccion']
+        Elegido = [0.1 if uni == universidad_seleccionada else 0 for uni in Lado]
         
         fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, explode=explode, autopct='%1.1f%%', 
+        ax.pie(Piezas, labels=Lado, explode=Elegido, autopct='%1.1f%%', 
                startangle=90, colors=sns.color_palette("pastel"))
         ax.axis('equal')
-        ax.set_title(f"Distribución de Satisfacción en {anio_seleccionado}")
+        ax.set_title(f"Distribución de Satisfacción en {año_seleccionado}")
         st.pyplot(fig)
 
-    def medidas_tendencia_central(self):
+    def medidas_tendencia_central(self): #yo xddddd
         st.header("Medidas de Tendencia Central")
         
         with st.sidebar:
@@ -189,7 +188,7 @@ class Analysis:
         st.write(f"**Mediana:** {mediana:.2f}")
         st.write(f"**Moda:** {moda:.2f}")
 
-    def analisis_distribucion(self):
+    def analisis_distribucion(self): #yop
         st.header("Análisis de Distribución")
         
         with st.sidebar:
@@ -213,7 +212,7 @@ class Analysis:
         plt.ylabel("Frecuencia")
         st.pyplot(plt)
 
-    def regresion_lineal(self):
+    def regresion_lineal(self): #lo hizo yair pero estaba remal y lo tube que arreglar xd
         st.header("Modelo Predictivo: Regresión Lineal")
         st.info("Este análisis utiliza un modelo de regresión lineal para predecir el rendimiento académico basado en el uso de videojuegos educativos.")
 
@@ -262,7 +261,7 @@ class App:
             rendimiento_url='https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/main/Tabladerendimientoacademico1.csv',
             satisfaccion_url='https://raw.githubusercontent.com/ElsincejasWasaaaaa/data/main/ComparativaDeSatisfaccionEstudiantil1.csv'
         )
-        self.analysis = Analysis(self.data_manager)
+        self.analysis = Analisis(self.data_manager)
 
     def run(self):
         self.data_manager.load_data()
@@ -280,7 +279,7 @@ class App:
                 "Regresión Lineal"
             ])
 
-        analysis_methods = {
+        Analisis_metodos = {
             "Rendimiento Académico": self.analysis.rendimiento_academico,
             "Satisfacción y Retención": self.analysis.satisfaccion_y_retencion,
             "Relación Uso y Rendimiento": self.analysis.analisis_relacion_uso_rendimiento,
@@ -290,7 +289,7 @@ class App:
             "Regresión Lineal": self.analysis.regresion_lineal
         }
 
-        analysis_methods[analisis]()
+        Analisis_metodos[analisis]()
 
 if __name__ == "__main__":
     app = App()
