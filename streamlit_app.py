@@ -222,8 +222,8 @@ class Analisis:
         }
         df = pd.DataFrame(datos)
 
-        st.subheader("Datos utilizados")
-        st.dataframe(df)
+        with st.expander("Datos utilizados"):
+            st.dataframe(df)
 
         plt.figure(figsize=(10, 6))
         sns.regplot(
